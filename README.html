@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram Username Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f2f5;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .generator-box {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            background: #8a3ab9;
+            color: white;
+            border: 0;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s ease;
+        }
+        button:hover {
+            background: #6c279e;
+        }
+        .results {
+            margin-top: 25px;
+        }
+        .username {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 5px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .check-btn {
+            background: #4CAF50;
+            padding: 8px 15px;
+            border-radius: 5px;
+            color: white;
+            text-decoration: none;
+            margin-left: 10px;
+        }
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeeba;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="generator-box">
+        <h1>Instagram Username Generator</h1>
+        
+        <div class="input-group">
+            <label>اختر النمط:</label>
+            <select id="pattern">
+                <option value="words">كلمات عربية/إنجليزية</option>
+                <option value="numbers">أرقام فقط</option>
+                <option value="mix">حروف وأرقام</option>
+                <option value="custom">نمط مخصص</option>
+            </select>
+        </div>
+        
+        <div class="input-group" id="customPatternGroup" style="display: none;">
+            <label>النمط المخصص (استخدم X للحروف و # للأرقام):</label>
+            <input type="text" id="customPattern" placeholder="مثال: XXX### أو ##XOXO">
+        </div>
+        
+        <button onclick="generateUsernames()">توليد أسماء</button>
+        
+        <div class="results" id="results"></div>
+        
+        <div class="warning">
+            ⚠️ ملاحظة مهمة: 
+            <ul>
+                <li>هذا الكود لا يفحص التوفر الفعلي بسبب قيود إنستغرام</li>
+                <li>التأكد من التوفر يتم يدويًا عبر زيارة: instagram.com/[username]</li>
+                <li>الاستخدام المكثف قد ينتهك شروط خدمة إنستغرام</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function generateUsernames() {
+            const patternType = document.getElementById('pattern').value;
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '';
+            
+            let pattern = '';
+            
+            if (patternType === 'custom') {
+                pattern = document.getElementById('customPattern').value;
+            } else {
+                // Generate default pattern based on selection
+                const patterns = {
+                    'words': 'XXXXXX',
+                    'numbers': '######',
+                    'mix': 'XXX###'
+                };
+                pattern = patterns[patternType];
+            }
+
+            const usernames = [];
+            const count = 10; // Number of usernames to generate
+            
+            for (let i = 0; i < count; i++) {
+                let username = '';
+                for (const char of pattern) {
+                    if (char === 'X') {
+                        username += getRandomLetter();
+                    } else if (char === '#') {
+                        username += getRandomNumber();
+                    } else {
+                        username += char;
+                    }
+                }
+                usernames.push(username);
+            }
+
+            usernames.forEach(username => {
+                const div = document.createElement('div');
+                div.className = 'username';
+                
+                div.innerHTML = `
+                    ${username}
+                    <a href="https://www.instagram.com/${username}" target="_blank" class="check-btn">تحقق يدويًا</a>
+                `;
+                
+                resultsDiv.appendChild(div);
+            });
+        }
+
+        function getRandomLetter() {
+            const letters = 'abcdefghijklmnopqrstuvwxyz';
+            return letters[Math.floor(Math.random() * letters.length)];
+        }
+
+        function getRandomNumber() {
+            return Math.floor(Math.random() * 10);
+        }
+
+        // Show/hide custom pattern input
+        document.getElementById('pattern').addEventListener('change', function() {
+            const customGroup = document.getElementById('customPatternGroup');
+            customGroup.style.display = (this.value === 'custom') ? 'block' : 'none';
+        });
+    </script>
+</body>
+</html>
