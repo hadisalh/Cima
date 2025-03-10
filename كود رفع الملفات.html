@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>السيرفر الخاص بهادي الدليمي</title>
+    <style>
+        /* تنسيق عام */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 0;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: url('https://imgur.com/UapcrKL.png'); /* استبدل بالصورة الجديدة */
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* الحاوية الرئيسية */
+        .container {
+            background-color: rgba(255, 255, 255, 0.9); /* خلفية شفافة مع إضاءة بيضاء */
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            max-width: 800px; /* عرض مناسب لشاشات الكمبيوتر */
+            width: 90%;
+            text-align: center;
+        }
+
+        /* إدخال النصوص وأزرار التحميل */
+        input[type="text"], input[type="password"], input[type="file"], textarea {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        /* الأزرار */
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        /* إخفاء العناصر */
+        .hidden {
+            display: none;
+        }
+
+        /* قائمة الرسائل */
+        .message-list {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .message-item {
+            margin: 15px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            font-size: 16px;
+        }
+
+        /* زر التنزيل */
+        .message-item button {
+            margin-left: 10px;
+            padding: 10px 20px;
+            font-size: 14px;
+        }
+
+        /* تحسينات للشاشات الكبيرة */
+        @media (min-width: 1200px) {
+            .container {
+                padding: 50px;
+            }
+
+            input[type="text"], input[type="password"], input[type="file"], textarea {
+                font-size: 18px;
+            }
+
+            button {
+                font-size: 20px;
+            }
+        }
+
+        /* صورة الشعار */
+        .logo {
+            position: absolute;
+            top: 20px;
+            right: 50%;
+            transform: translateX(50%);
+            width: 200px;
+            animation: shrinkLogo 3s forwards;
+        }
+
+        @keyframes shrinkLogo {
+            from {
+                width: 400px;
+            }
+            to {
+                width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- شعار المحافظة -->
+    <img src="https://imgur.com/lvV5ERI.png" alt="شعار محافظة الأنبار" class="logo">
+
+    <div class="container">
+        <h1>السيرفر الخاص بالاستاذ هادي الدليمي</h1>
+
+        <!-- زر رفع الملفات -->
+        <button id="uploadButton">رفع الملفات</button>
+
+        <!-- زر تنزيل الملفات -->
+        <button id="downloadButton">تنزيل الملفات</button>
+
+        <!-- نموذج التحقق لرفع الملفات -->
+        <div id="authFormUpload" class="hidden">
+            <h2>يرجى إدخال بياناتك</h2>
+            <input type="text" id="fullNameUpload" placeholder="الاسم الثلاثي" required>
+            <input type="password" id="passwordUpload" placeholder="كلمة المرور" required>
+            <button id="authSubmitUpload">تأكيد</button>
+        </div>
+
+        <!-- نموذج رفع الملف -->
+        <div id="uploadForm" class="hidden">
+            <h2>رفع ملف</h2>
+            <form id="fileUploadForm" enctype="multipart/form-data">
+                <input type="file" id="fileInput" name="file" required>
+                <textarea id="fileDescription" name="description" placeholder="وصف الملف"></textarea>
+                <button type="submit">رفع الملف</button>
+            </form>
+        </div>
+
+        <!-- نموذج التحقق لتنزيل الملفات -->
+        <div id="authFormDownload" class="hidden">
+            <h2>يرجى إدخال كلمة المرور</h2>
+            <input type="password" id="passwordDownload" placeholder="كلمة المرور" required>
+            <button id="authSubmitDownload">تأكيد</button>
+        </div>
+
+        <!-- نموذج البحث عن الرسائل -->
+        <div id="searchForm" class="hidden">
+            <h2>بحث عن نص في الرسائل</h2>
+            <p>ادخل كلمة واحدة أو جزء منها للبحث:</p>
+            <input type="text" id="searchInput" placeholder="ادخل النص للبحث" required>
+            <button id="searchButton">بحث</button>
+        </div>
+
+        <!-- قائمة الرسائل المتاحة -->
+        <div id="messageListContainer" class="hidden">
+            <h2>نتائج البحث</h2>
+            <div id="messageList" class="message-list"></div>
+        </div>
+
+        <!-- رسالة النجاح -->
+        <div id="successMessage" class="hidden">
+            <p>تم رفع الملف بنجاح!</p>
+        </div>
+    </div>
+
+    <script>
+        const uploadButton = document.getElementById('uploadButton');
+        const downloadButton = document.getElementById('downloadButton');
+        const authFormUpload = document.getElementById('authFormUpload');
+        const uploadForm = document.getElementById('uploadForm');
+        const authFormDownload = document.getElementById('authFormDownload');
+        const searchForm = document.getElementById('searchForm');
+        const searchInput = document.getElementById('searchInput');
+        const searchButton = document.getElementById('searchButton');
+        const messageListContainer = document.getElementById('messageListContainer');
+        const messageList = document.getElementById('messageList');
+        const successMessage = document.getElementById('successMessage');
+
+        let fullName = ""; // لتخزين الاسم الثلاثي
+
+        // عند الضغط على زر "رفع الملفات"
+        uploadButton.addEventListener('click', () => {
+            authFormUpload.classList.remove('hidden');
+        });
+
+        // عند الضغط على زر "تأكيد" في نموذج التحقق لرفع الملفات
+        document.getElementById('authSubmitUpload').addEventListener('click', () => {
+            fullName = document.getElementById('fullNameUpload').value.trim();
+            const password = document.getElementById('passwordUpload').value;
+
+            if (fullName !== "" && password === "552443") {
+                authFormUpload.classList.add('hidden');
+                uploadForm.classList.remove('hidden');
+            } else {
+                alert("الاسم الثلاثي أو كلمة المرور غير صحيحة!");
+            }
+        });
+
+        // عند الضغط على زر "تنزيل الملفات"
+        downloadButton.addEventListener('click', () => {
+            authFormDownload.classList.remove('hidden');
+        });
+
+        // عند الضغط على زر "تأكيد" في نموذج التحقق لتنزيل الملفات
+        document.getElementById('authSubmitDownload').addEventListener('click', async () => {
+            const password = document.getElementById('passwordDownload').value;
+
+            if (password === "199800") {
+                authFormDownload.classList.add('hidden');
+                searchForm.classList.remove('hidden');
+            } else {
+                alert("كلمة المرور غير صحيحة!");
+            }
+        });
+
+        // عند الضغط على زر "بحث"
+        searchButton.addEventListener('click', async () => {
+            const searchText = searchInput.value.trim();
+
+            if (!searchText) {
+                alert("يرجى إدخال نص للبحث!");
+                return;
+            }
+
+            await fetchAndDisplayMessages(searchText);
+        });
+
+        // عند إرسال نموذج رفع الملف
+        document.getElementById('fileUploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const fileInput = document.getElementById('fileInput');
+            const description = document.getElementById('fileDescription').value;
+
+            if (!fileInput.files[0]) {
+                alert("يرجى اختيار ملف أولاً!");
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const formData = new FormData();
+            formData.append('document', file);
+
+            // إرفاق الاسم الثلاثي مع الوصف
+            const caption = `${fullName}\n${description || ''}`;
+            formData.append('caption', caption);
+
+            try {
+                const response = await fetch(`https://api.telegram.org/bot8149389736:AAFgeqcH2X_d8tgXId94BnE4NALRmN78ybU/sendDocument?chat_id=346233181`, {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (response.ok) {
+                    uploadForm.classList.add('hidden');
+                    successMessage.classList.remove('hidden');
+                } else {
+                    alert("حدث خطأ أثناء رفع الملف!");
+                }
+            } catch (error) {
+                console.error("خطأ:", error);
+                alert("حدث خطأ أثناء رفع الملف!");
+            }
+        });
+
+        // استرداد الرسائل من الدردشة
+        async function fetchAndDisplayMessages(searchQuery) {
+            try {
+                const response = await fetch(`https://api.telegram.org/bot8149389736:AAFgeqcH2X_d8tgXId94BnE4NALRmN78ybU/getUpdates`);
+                const data = await response.json();
+
+                if (data.ok) {
+                    const messages = data.result.flatMap(update => update.message || []);
+                    const filteredMessages = messages.filter(msg => {
+                        const textMatch = msg.text && msg.text.toLowerCase().includes(searchQuery.toLowerCase());
+                        const fileNameMatch = msg.document && msg.document.file_name && msg.document.file_name.toLowerCase().includes(searchQuery.toLowerCase());
+                        return textMatch || fileNameMatch;
+                    });
+
+                    messageList.innerHTML = ''; // مسح القائمة السابقة
+
+                    if (filteredMessages.length === 0) {
+                        messageList.innerHTML = '<p>لم يتم العثور على أي رسائل.</p>';
+                        messageListContainer.classList.remove('hidden');
+                        return;
+                    }
+
+                    filteredMessages.forEach(msg => {
+                        const messageItem = document.createElement('div');
+                        messageItem.className = 'message-item';
+
+                        if (msg.text) {
+                            const textSpan = document.createElement('span');
+                            textSpan.textContent = `نص الرسالة: ${msg.text}`;
+                            messageItem.appendChild(textSpan);
+                        }
+
+                        if (msg.document) {
+                            const fileNameSpan = document.createElement('span');
+                            fileNameSpan.textContent = `ملف: ${msg.document.file_name}`;
+
+                            const downloadButton = document.createElement('button');
+                            downloadButton.textContent = 'تنزيل';
+                            downloadButton.onclick = () => downloadFile(msg.document.file_id, msg.document.file_name);
+
+                            messageItem.appendChild(fileNameSpan);
+                            messageItem.appendChild(downloadButton);
+                        }
+
+                        messageList.appendChild(messageItem);
+                    });
+
+                    messageListContainer.classList.remove('hidden');
+                } else {
+                    alert("حدث خطأ أثناء استرداد الرسائل!");
+                }
+            } catch (error) {
+                console.error("خطأ:", error);
+                alert("حدث خطأ أثناء استرداد الرسائل!");
+            }
+        }
+
+        // تنزيل الملف باستخدام File ID
+        async function downloadFile(fileId, fileName) {
+            try {
+                const response = await fetch(`https://api.telegram.org/bot8149389736:AAFgeqcH2X_d8tgXId94BnE4NALRmN78ybU/getFile?file_id=${fileId}`);
+                const data = await response.json();
+
+                if (data.ok) {
+                    const filePath = data.result.file_path;
+                    const fileUrl = `https://api.telegram.org/file/bot8149389736:AAFgeqcH2X_d8tgXId94BnE4NALRmN78ybU/${filePath}`;
+                    window.open(fileUrl, '_blank');
+                } else {
+                    alert("حدث خطأ أثناء تنزيل الملف!");
+                }
+            } catch (error) {
+                console.error("خطأ:", error);
+                alert("حدث خطأ أثناء تنزيل الملف!");
+            }
+        }
+    </script>
+</body>
+</html>
